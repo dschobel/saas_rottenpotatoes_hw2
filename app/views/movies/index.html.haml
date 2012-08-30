@@ -4,15 +4,14 @@
 %table#movies
   %thead
     %tr
-      %th
-        %a{:id => "title_header", :href => "www.google.com"} Googley
+      %th= link_to "Title", {:sort=>"title"}, {:id=>"title_header"}
       %th Rating
-      %th Release Date
+      %th= link_to "Release Date", {:sort=>"release_date"},{:id => "release_data_header"}
       %th More Info
   %tbody
     - @movies.each do |movie|
       %tr
-        %td= movie.title 
+        %td= movie.title
         %td= movie.rating
         %td= movie.release_date
         %td= link_to "More about #{movie.title}", movie_path(movie)
