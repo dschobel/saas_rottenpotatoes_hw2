@@ -6,9 +6,11 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
-  def get_redirect_path(symbol)
+  def get_missing_params_from_session(symbol)
     if nil == params[symbol] && session[symbol]
-      return movies_path(params.merge(symbol => session[symbol]))
+      return params.merge(symbol => session[symbol])
+    else 
+      return {}
     end
   end
 
@@ -16,14 +18,11 @@ class MoviesController < ApplicationController
     #ActiveRecord::Base.logger = Logger.new STDOUT
     @all_ratings = Movie::RATINGS
 
-    sort_path = get_redirect_path(:sort)
-    ratings_path = get_redirect_path(:ratings)
-    if sort_path != nil then 
-      redirect_to sort_path 
-      return 
-    end
-    if ratings_path != nil then 
-      redirect_to ratings_path 
+    new_params = {}
+    new_params.merge! get_missing_params_from_session(:sort)
+    new_params.merge! get_missing_params_from_session(:ratings)
+    if new_params.empty? == false then 
+      redirect_to movies_path(new_params)
       return
     end
 
