@@ -6,17 +6,25 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
-  def index
-    @all_ratings = Movie.Ratings
-    if params[:sort] == "title"
-      @title_sort = true
-      @movies = Movie.find(:all, :order => "title")
-    elsif params[:sort] == "release_date"
-      @release_sort = true
-      @movies = Movie.find(:all, :order => "release_date")
-    else
-      @movies = Movie.all
+  def update_ratings_session
+    if params[:ratings]
+      session[:ratings] = params[:ratings].keys
     end
+  end
+
+  def index
+    #ActiveRecord::Base.logger = Logger.new STDOUT
+    @all_ratings = Movie::RATINGS
+    @title_sort = (params[:sort] == "title")
+    @release_sort = (params[:sort] == "release_date")
+    if params[:ratings]
+      update_ratings_session
+    end
+
+    @movies = Movie.all(
+        :order => params[:sort],
+        :conditions => {:rating => session[:ratings] || []}
+        )
   end
 
   def new
