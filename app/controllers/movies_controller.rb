@@ -10,20 +10,25 @@ class MoviesController < ApplicationController
     #ActiveRecord::Base.logger = Logger.new STDOUT
     @all_ratings = Movie::RATINGS
 
-    if params[:sort]
-      session[:sort] = params[:sort]
+    if nil == params[:sort] && session[:sort]
+      redirect_to movies_path(params.merge(:sort => session[:sort]))
+      return
     end
 
-    if params[:ratings]
-      session[:ratings] = params[:ratings].keys
+    if nil == params[:ratings] && session[:ratings]
+      redirect_to movies_path(params.merge(:ratings => session[:ratings]))
+      return
     end
+
+    session[:sort] = params[:sort] if params[:sort] != nil
+    session[:ratings] = params[:ratings] if params[:ratings] != nil
 
     @title_sort = (session[:sort] == "title")
     @release_sort = (session[:sort] == "release_date")
 
     @movies = Movie.all(
         :order => session[:sort],
-        :conditions => {:rating => session[:ratings] || []}
+        :conditions => {:rating => if session[:ratings] then session[:ratings].keys  else [] end}
         )
   end
 
