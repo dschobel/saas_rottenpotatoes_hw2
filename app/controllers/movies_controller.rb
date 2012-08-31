@@ -6,23 +6,23 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
-  def update_ratings_session
-    if params[:ratings]
-      session[:ratings] = params[:ratings].keys
-    end
-  end
-
   def index
     #ActiveRecord::Base.logger = Logger.new STDOUT
     @all_ratings = Movie::RATINGS
-    @title_sort = (params[:sort] == "title")
-    @release_sort = (params[:sort] == "release_date")
-    if params[:ratings]
-      update_ratings_session
+
+    if params[:sort]
+      session[:sort] = params[:sort]
     end
 
+    if params[:ratings]
+      session[:ratings] = params[:ratings].keys
+    end
+
+    @title_sort = (session[:sort] == "title")
+    @release_sort = (session[:sort] == "release_date")
+
     @movies = Movie.all(
-        :order => params[:sort],
+        :order => session[:sort],
         :conditions => {:rating => session[:ratings] || []}
         )
   end
