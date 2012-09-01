@@ -22,6 +22,7 @@ class MoviesController < ApplicationController
     new_params.merge! get_missing_params_from_session(:sort)
     new_params.merge! get_missing_params_from_session(:ratings)
     if new_params.empty? == false then 
+      flash.keep
       redirect_to movies_path(new_params)
       return
     end
